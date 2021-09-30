@@ -1,0 +1,46 @@
+
+#include <thread>
+
+创建线程：
+std::thread th1(proc1);
+
+等待线程：
+
+join()与detach()
+
+理解互斥量：
+
+单位有一台打印机（共享数据a），你（线程1）和同事（线程2）要同时操作打印机。使用打印机之前要申请许可证（lock），用完后归还许可证（unlock）。
+
+此时，打印机是共享数据，访问打印机的这段代码是临界区，许可证是互斥量。
+
+由锁引入死锁的问题：死锁的四个条件/死锁预防（破坏死锁的条件）/死锁避免（银行家算法）/死锁检测/死锁解除
+
+临界区：速度最快，只能作用于同一进程下的不同线程（还是不太理解临界区到底是什么？）
+EnterCriticalSection();
+LeaveCriticalSection();
+
+信号量：用宾馆房间数来理解
+
+读写锁：把共享资源的访问者分为读者和写者，多个读线程能同时读取资源，但只有一个写线程能读取共享资源。
+shared_mutex s_m;
+std::string book;
+
+void read()
+{
+  s_m.lock_shared();
+  cout << book;
+  s_m.unlock_shared();
+}
+
+void write()
+{
+  s_m.lock();
+  book = "new context";
+  s_m.unlock();
+}
+
+自旋锁：
+如果自旋锁已经被别的单位保持，调用者会一直循环直到锁被释放。
+
+互斥量的使用：
