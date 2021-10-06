@@ -8,6 +8,33 @@ std::thread th1(proc1);
 
 join()与detach()
 
+#include <iostream>
+#include <thread>
+#include <vector>
+
+void Hello(){
+
+    //std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "Hello World!" << std::endl;
+}
+
+int main(){
+    
+    std::vector<std::thread> threads;
+
+    for(int i = 0; i < 10; i++){
+        threads.push_back(std::thread(Hello));
+    }
+    for(auto & t : threads){
+        t.join(); // join()函数: 等待线程结束，否则线程还没执行完，主程序以及结束了
+    }
+
+
+    return 0;
+
+}
+
+
 理解互斥量：
 
 单位有一台打印机（共享数据a），你（线程1）和同事（线程2）要同时操作打印机。使用打印机之前要申请许可证（lock），用完后归还许可证（unlock）。
