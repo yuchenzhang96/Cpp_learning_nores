@@ -1,0 +1,17 @@
+final keyword in c++
+
+1. declare class as final:
+
+struct Base final {};
+struct Derived : Base {}; // a 'final' class type cannot be used as a base class
+
+2. declare function as final:
+
+struct Base {
+    virtual void f() final;
+};
+
+struct Derived : Base
+{
+    void f(); // cannot override 'final' function "Base::f" (declared at line 2)
+};
