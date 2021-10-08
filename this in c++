@@ -1,0 +1,123 @@
+Understand this pointer
+
+To understand ‘this’ pointer, it is important to know how objects look at functions and data members of a class.
+
+Each object gets its own copy of the data member.
+All-access the same function definition as present in the code segment.
+Meaning each object gets its own copy of data members and all objects share a single copy of member functions.
+Then now question is that if only one copy of each member function exists and is used by multiple objects, how are the proper data members are accessed and updated?
+The compiler supplies an implicit pointer along with the names of the functions as ‘this’.
+The ‘this’ pointer is passed as a hidden argument to all nonstatic member function calls and is available as a local variable within the body of all nonstatic functions. ‘this’ pointer is not available in static member functions as static member functions can be called without any object (with class name).
+
+Can I use delete this in class?
+As long as you’re careful, it’s okay (not evil) for an object to commit suicide (delete this).
+
+Here’s how I define “careful”:
+
+You must be absolutely 100% positively sure that this object was allocated via new (not by new[], nor by placement new, nor a local object on the stack, nor a namespace-scope / global, nor a member of another object; but by plain ordinary new).
+You must be absolutely 100% positively sure that your member function will be the last member function invoked on this object.
+You must be absolutely 100% positively sure that the rest of your member function (after the delete this line) doesn’t touch any piece of this object (including calling any other member functions or touching any data members). This includes code that will run in destructors for any objects allocated on the stack that are still alive.
+You must be absolutely 100% positively sure that no one even touches the this pointer itself after the delete this line. In other words, you must not examine it, compare it with another pointer, compare it with nullptr, print it, cast it, do anything with it.
+Naturally the usual caveats apply in cases where your this pointer is a pointer to a base class when you don’t have a virtual destructor.
+
+
+The practice of this pointer in class:
+
+#include <iostream>
+
+using namespace std;
+
+class Test
+{
+private:
+    int x;
+public:
+    void setX(int x)
+    {
+        // 
+        this->x = x;
+    }
+
+    void print()
+    {
+        cout << "x = " << x << endl;
+    }
+};
+
+class Test1
+{
+private:
+    int x;
+    int y;
+public:
+    Test1(int x = 0, int y = 0) {this->x = x; this->y = y;}
+    Test1& setX(int a) {x = a; return *this; }
+    Test1& setY(int b) {y = b; return *this; }
+    void print() { cout << "x = " << x << " y = " << y << endl;}
+};
+
+class Foo
+{
+public:
+    Foo()
+    {
+        this->value = 0;
+    }
+    
+    // this function will return a clone 
+    Foo get_copy()
+    {
+        return *this;
+    }
+
+    // this function will return the reference
+    Foo& get_copy_as_ref()
+    {
+        return *this;
+    }
+
+    Foo* get_pointer()
+    {
+        return this;
+    }
+
+    void increment()
+    {
+        this->value++;
+    }
+
+    void print_value()
+    {
+        cout << this->value << endl;
+    }
+private:
+
+    int value;
+};
+
+int main()
+{
+    Test obj;
+    int x = 20;
+    obj.setX(x);
+    obj.print();
+
+    Test1 obj1(5, 5);
+    obj1.print();
+    obj1.setX(10).setY(20);
+    obj1.print();
+
+    Foo foo;
+    foo.increment();
+    foo.print_value();
+
+    foo.get_copy().increment();
+    foo.print_value();
+
+    foo.get_copy_as_ref().increment();
+    foo.print_value();
+
+    foo.get_pointer()->increment();
+    foo.print_value();
+    return 0;
+}
