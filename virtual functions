@@ -1,0 +1,65 @@
+can use virtual functions in constructor or destructor?
+
+Calling virtual functions from a constructor or destructor is considered dangerous most of the times and must be avoided whenever possible. All the C++ implementations need to call the version of the function defined at the level of the hierarchy in the current constructor and not further. 
+You can call a virtual function in a constructor. The Objects are constructed from the base up, “base before derived”.
+
+It is not advised to call virtual functions in constructor or destructor:
+
+It will cause unexpected behaviour if you call it from a base class and (erroneously) expect it to be dispatched to an override in a derived class;
+It will cause undefined behaviour if it is pure virtual;
+You'll keep having to explain your decision to people who believe that it's always wrong to that.
+
+#include <iostream>
+
+using namespace std;
+
+class Dog
+{
+public:
+    Dog()
+    {
+        cout << "Constructor called" << endl;
+        bark();
+    }
+
+    virtual ~Dog()
+    {
+        cout << "Destructor called" << endl;
+    }
+
+    virtual void bark()
+    {
+        cout << "Virtual function bark called" << endl;
+    }
+
+    void seeCat()
+    {
+        bark();
+    }
+};
+
+class YellowDog : public Dog
+{
+public:
+    YellowDog()
+    {
+        cout << "Derived class Constructor called" << endl;
+    }
+    void bark()
+    {
+        cout << "Derived class vritual method called" << endl;
+    }
+    ~YellowDog()
+    {
+        cout << "Derived class destructor called" << endl;
+        bark();
+    }
+};
+
+int main()
+{
+    Dog* d = new YellowDog();
+    d->seeCat();
+    delete d;
+    d = NULL;
+}
