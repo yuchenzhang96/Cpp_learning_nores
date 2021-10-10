@@ -1,0 +1,10 @@
+https://en.cppreference.com/w/cpp/language/dynamic_cast
+
+https://www.geeksforgeeks.org/dynamic-_cast-in-cpp/
+
+Dynamic Cast: a cast is an operator that converts data from one type to another type. In C++, dynamic casting is mainly used for safely downcasting at run time. To work on dynamic_cast there must be one virtual function in the base class. A dynamic_cast works only polymorphic base class because it uses this info to decide downcasting.
+
+dynamic_cast<new_type>(expression)
+
+Downcasting: cast a base class pointer to a derived class pointer.
+Upcasting: cast a derived class pointer to a base class pointer.
